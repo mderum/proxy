@@ -1,0 +1,13 @@
+{
+  "name": "qwen-mid-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Transparent middle-proxy: User -> Vercel -> https://qwen.aikit.club (OpenAI-compatible)",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev:proxy": "node scripts/dev-proxy.mjs"
+  }
+}
