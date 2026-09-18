@@ -1,13 +1,19 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/api/$1"
-    }
+    { "source": "/", "destination": "/api" },
+    { "source": "/health", "destination": "/api/health" },
+    { "source": "/v1/:path*", "destination": "/api/v1/:path*" },
+    { "source": "/models", "destination": "/api/models" },
+    { "source": "/validate", "destination": "/api/validate" },
+    { "source": "/refresh", "destination": "/api/refresh" },
+    { "source": "/chat/:path*", "destination": "/api/chat/:path*" },
+    { "source": "/images/:path*", "destination": "/api/images/:path*" },
+    { "source": "/videos/:path*", "destination": "/api/videos/:path*" },
+    { "source": "/chats/:path*", "destination": "/api/chats/:path*" }
   ],
   "functions": {
-    "api/[[...path]].js": {
+    "api/[...path].js": {
       "maxDuration": 60
     }
   }

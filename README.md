@@ -17,8 +17,9 @@ for auth, **streaming supported**, **backend only** (no UI).
 ## Project layout
 
 ```
-api/[[...path]].js   # catch-all proxy function (the whole app)
-vercel.json          # rewrites every /* (except /api/*) to /api/*
+api/[...path].js     # catch-all proxy function (the whole app)
+api/index.js         # root "/" health endpoint
+vercel.json          # explicit rewrites from public paths to /api/*
 package.json         # zero dependencies, Node >= 18 (native fetch)
 scripts/dev-proxy.mjs# local dev mirror for testing without Vercel
 ```
@@ -45,6 +46,12 @@ vercel --prod
 Optional env var: `UPSTREAM_BASE_URL` (default `https://qwen.aikit.club`).
 
 ## Use it (drop-in OpenAI base URL)
+
+Base URL (note the `/v1` suffix, same as the aikit URL you used before):
+
+```
+https://<your-app>.vercel.app/v1
+```
 
 ```bash
 # models
@@ -88,3 +95,16 @@ print(client.models.list())
 node scripts/dev-proxy.mjs 3000
 curl.exe http://localhost:3000/v1/models -H "Authorization: Bearer test"
 ```
+
+## Troubleshooting
+
+- `404 The page could not be found` → the request never reached the function.
+  Check in Vercel: (1) redeployed after latest push, (2) project **Root Directory**
+  is the folder containing `api/` and `vercel.json` (not its parent),
+  (3) Functions tab lists `api/[...path]` and `api/index`.
+- Sanity checks on the deployed URL (no token needed):
+  `GET https://<your-app>.vercel.app/` → `{ "status": "ok", ... }`,
+  `GET https://<your-app>.vercel.app/v1/models` (with `Authorization` header)
+  → `{ "object": "list", ... }`.
+- Upstream-shaped JSON errors (`chat_creation_failed`, `authentication_error`, …)
+  mean the proxy is working and the problem is the token/model upstream.
